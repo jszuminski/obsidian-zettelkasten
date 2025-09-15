@@ -9,21 +9,12 @@ import {
 	Setting,
 } from "obsidian";
 import { FolderSuggest } from "src/FolderSuggest.class";
+import { setCurrentlyReading } from "src/currentlyReading/setCurrentlyReading";
+import { DEFAULT_SETTINGS } from "src/settings/settings.const";
+import { IPluginSettings } from "src/settings/settings.types";
 
-// Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
-	literatureNotesLocation: string;
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	literatureNotesLocation: "",
-	mySetting: "default",
-};
-
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class IPlugin extends Plugin {
+	settings: IPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -43,6 +34,12 @@ export default class MyPlugin extends Plugin {
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText("Status Bar Text");
+
+		this.addCommand({
+			id: "set-current-literature-note",
+			name: "Set currently reading Literature Note",
+			callback: () => setCurrentlyReading(this.app, this),
+		});
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
@@ -129,9 +126,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: IPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: IPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -155,18 +152,5 @@ class SampleSettingTab extends PluginSettingTab {
 
 				new FolderSuggest(this.app, search.inputEl);
 			});
-
-		new Setting(containerEl)
-			.setName("Setting #1")
-			.setDesc("It's a secret")
-			.addText((text) =>
-				text
-					.setPlaceholder("Enter your secret")
-					.setValue(this.plugin.settings.mySetting)
-					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
-						await this.plugin.saveSettings();
-					})
-			);
 	}
 }

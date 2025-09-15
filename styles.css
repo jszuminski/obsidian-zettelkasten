@@ -1,8 +1,16 @@
-/*
+.literature-note-input {
+	width: 100%;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.modal-button-container {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
+}
 
-If your plugin does not need CSS, delete this file.
-
-*/
+.suggestion-note-subtitle {
+	font-size: 12px;
+	color: var(--text-muted);
+	margin-top: 2px;
+}
