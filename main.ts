@@ -8,14 +8,17 @@ import {
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
+import { FolderSuggest } from "src/FolderSuggest.class";
 
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
+	literatureNotesLocation: string;
 	mySetting: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
+	literatureNotesLocation: "",
 	mySetting: "default",
 };
 
@@ -137,6 +140,21 @@ class SampleSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
+
+		new Setting(containerEl)
+			.setName("Literature notes location")
+			.setDesc("Where do you store all your literature notes?")
+			.addSearch((search) => {
+				search
+					.setPlaceholder("ex. Literature")
+					.setValue(this.plugin.settings.literatureNotesLocation)
+					.onChange(async (value) => {
+						this.plugin.settings.literatureNotesLocation = value;
+						await this.plugin.saveSettings();
+					});
+
+				new FolderSuggest(this.app, search.inputEl);
+			});
 
 		new Setting(containerEl)
 			.setName("Setting #1")
