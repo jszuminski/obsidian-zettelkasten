@@ -1,5 +1,5 @@
 import { Modal, App, TFile } from "obsidian";
-import { NoteSuggest } from "src/NoteSuggest.class";
+import { NoteSuggest } from "src/shared/NoteSuggest.class";
 import { IPluginType } from "src/plugin.types";
 
 class LiteratureNoteModal extends Modal {
@@ -74,7 +74,7 @@ class LiteratureNoteModal extends Modal {
 	onKeyDown = (e: KeyboardEvent) => {
 		console.log("onKeyDown", e.key);
 		if (e.key === "Enter") {
-			this.onSave();
+			// this.onSave();
 		}
 	};
 
