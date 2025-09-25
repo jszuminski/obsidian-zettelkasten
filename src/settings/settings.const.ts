@@ -7,4 +7,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 	// related to note creation
 	noteTemplatePath: "",
 	notesLocation: "",
+
+	// ex. "1080. Note title"
+	idSeparator: ".",
 };

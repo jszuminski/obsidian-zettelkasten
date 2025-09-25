@@ -1,5 +1,6 @@
 import { App, Modal, TFile } from "obsidian";
 import { IPluginType } from "src/plugin.types";
+import { getMaxFileIdInDirectory } from "src/shared/getMaxFileIdInDirectory";
 
 class CreateNoteModal extends Modal {
 	private plugin: IPluginType;
@@ -26,11 +27,17 @@ class CreateNoteModal extends Modal {
 				this.createButton.disabled = true;
 			}
 
-			// Create the note file path
-			const fileName = `${noteTitle}.md`;
+			const maxFileId = getMaxFileIdInDirectory({
+				directory: this.plugin.settings.notesLocation,
+				idSeparator: this.plugin.settings.idSeparator,
+				obsidian: this.app
+			})
+
+			const fileName = `${maxFileId + 1}${this.plugin.settings.idSeparator} ${noteTitle}.md`;
 			const filePath = this.plugin.settings.notesLocation
 				? `./${this.plugin.settings.notesLocation}/${fileName}`
 				: fileName;
+
 
 			// Create the note content - use template if available
 			let noteContent: string;

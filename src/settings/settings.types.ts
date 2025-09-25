@@ -7,4 +7,6 @@ export type IPluginSettings = {
 	// related to note creation
 	noteTemplatePath: string;
 	notesLocation: string;
+
+	idSeparator: string;
 };

@@ -100,5 +100,17 @@ export class SettingsTab extends PluginSettingTab {
 
 				new FolderSuggest(this.app, search.inputEl);
 			});
+
+		new Setting(containerEl)
+			.setName("ID separator")
+			.setDesc("'.' if your note titles look like '15. Note title'")
+			.addText((text) => {
+				text.setPlaceholder(". or / or )");
+				text.setValue(this.plugin.settings.idSeparator);
+				text.onChange(async (value) => {
+					this.plugin.settings.idSeparator = value;
+					await this.plugin.saveSettings();
+				});
+			});
 	}
 }
