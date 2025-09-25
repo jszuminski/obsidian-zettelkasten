@@ -37,7 +37,7 @@ class CreateNoteModal extends Modal {
 
 			const fileName = `${maxFileId + 1}${this.plugin.settings.idSeparator} ${noteTitle}.md`;
 			const filePath = this.plugin.settings.notesLocation
-				? `./${this.plugin.settings.notesLocation}/${fileName}`
+				? `${this.plugin.settings.notesLocation}/${fileName}`
 				: fileName;
 
 
@@ -110,11 +110,15 @@ class CreateNoteModal extends Modal {
 				noteContent = `# ${noteTitle}\n\n`;
 			}
 
+			// for some reason it's empty, so we're going to work around it by getting this file
 			const newFile = await this.app.vault.create(filePath, noteContent);
+			console.log('filePath: ', filePath);
+			const newFileAbstract = this.app.vault.getFileByPath(filePath);
 			console.log("newFile", newFile); // for some reason it's empty
+			console.log("newFileAbstract", newFileAbstract);
 
 			// Open the newly created note
-			const leaf = this.app.workspace.getLeaf(false);
+			const leaf = this.app.workspace.getLeaf(true);
 			await leaf.openFile(newFile);
 
 			this.close();
