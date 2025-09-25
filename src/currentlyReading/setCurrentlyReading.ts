@@ -14,67 +14,60 @@ class LiteratureNoteModal extends Modal {
 		this.plugin = plugin;
 	}
 
+	async updateSetting(file: TFile | null) {
+		console.log('updating setting with file: ', file);
+
+		if (this.saveButton) {
+			this.saveButton.textContent = "Saving...";
+		}
+
+		this.plugin.settings.currentlyReading = file;
+		await this.plugin.saveSettings();
+
+		if (this.saveButton) {
+			this.saveButton.textContent = "Saved";
+		}
+	}
+
 	async onSave() {
-		console.log("onSave");
-
-		console.log("this plugin settings: ", this.plugin.settings);
-
 		if (this.selectedFile) {
-			console.log("Selected literature note:", {
-				name: this.selectedFile.basename,
-				path: this.selectedFile.path,
-				file: this.selectedFile,
-			});
+			await this.updateSetting(this.selectedFile);
 			this.close();
-		} else {
-			// Try to find file by input value
-			const inputValue = this.inputEl?.value.trim();
-			if (inputValue) {
-				// Search for file by basename
-				const allFiles = this.app.vault.getMarkdownFiles();
-				const foundFile = allFiles.find(
-					(file) =>
-						file.basename === inputValue &&
-						(file.path.startsWith(
-							this.plugin.settings.literatureNotesLocation + "/"
+			return;
+		}
+
+		// Try to find file by input value
+		const inputValue = this.inputEl?.value.trim();
+		if (inputValue) {
+			// Search for file by basename
+			const allFiles = this.app.vault.getMarkdownFiles();
+			const foundFile = allFiles.find(
+				(file) =>
+					file.basename === inputValue &&
+					(file.path.startsWith(
+						this.plugin.settings.literatureNotesLocation + "/"
+					) ||
+						file.path.startsWith(
+							this.plugin.settings.literatureNotesLocation
 						) ||
-							file.path.startsWith(
-								this.plugin.settings.literatureNotesLocation
-							) ||
-							!this.plugin.settings.literatureNotesLocation)
-				);
+						!this.plugin.settings.literatureNotesLocation)
+			);
 
-				if (foundFile) {
-					this.plugin.settings.currentlyReading = {
-						name: foundFile.basename,
-						path: foundFile.path,
-						file: foundFile,
-					};
-
-					if (this.saveButton) {
-						this.saveButton.textContent = "Saving...";
-					}
-
-					await this.plugin.saveSettings();
-
-					if (this.saveButton) {
-						this.saveButton.textContent = "Saved";
-					}
-
-					this.close();
-				} else {
-					console.log("No file selected or file not found");
-				}
+			if (foundFile) {
+				await this.updateSetting(foundFile);
+				this.close();
 			} else {
-				console.log("No file selected");
+				console.log("No file selected or file not found");
 			}
+		} else {
+			console.log("No file selected");
 		}
 	}
 
 	onKeyDown = (e: KeyboardEvent) => {
 		console.log("onKeyDown", e.key);
 		if (e.key === "Enter") {
-			// this.onSave();
+			this.onSave();
 		}
 	};
 
@@ -128,47 +121,8 @@ class LiteratureNoteModal extends Modal {
 			this.close();
 		});
 
-		this.saveButton.addEventListener("click", () => {
-			if (this.selectedFile) {
-				console.log("Selected literature note:", {
-					name: this.selectedFile.basename,
-					path: this.selectedFile.path,
-					file: this.selectedFile,
-				});
-				this.close();
-			} else {
-				// Try to find file by input value
-				const inputValue = this.inputEl?.value.trim();
-				if (inputValue) {
-					// Search for file by basename
-					const allFiles = this.app.vault.getMarkdownFiles();
-					const foundFile = allFiles.find(
-						(file) =>
-							file.basename === inputValue &&
-							(file.path.startsWith(
-								this.plugin.settings.literatureNotesLocation +
-									"/"
-							) ||
-								file.path.startsWith(
-									this.plugin.settings.literatureNotesLocation
-								) ||
-								!this.plugin.settings.literatureNotesLocation)
-					);
-
-					if (foundFile) {
-						console.log("Selected literature note:", {
-							name: foundFile.basename,
-							path: foundFile.path,
-							file: foundFile,
-						});
-						this.close();
-					} else {
-						console.log("No file selected or file not found");
-					}
-				} else {
-					console.log("No file selected");
-				}
-			}
+		this.saveButton.addEventListener("click", async () => {
+			this.onSave();
 		});
 
 		document.addEventListener("keydown", this.onKeyDown);

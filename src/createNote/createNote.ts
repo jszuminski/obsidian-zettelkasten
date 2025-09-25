@@ -1,6 +1,8 @@
 import { App, Modal, TFile } from "obsidian";
 import { IPluginType } from "src/plugin.types";
+import { CURRENTLY_READING_PLACEHOLDER } from "src/shared/config";
 import { getMaxFileIdInDirectory } from "src/shared/getMaxFileIdInDirectory";
+import { removeFileExtension } from "src/shared/removeFileExtension"
 
 class CreateNoteModal extends Modal {
 	private plugin: IPluginType;
@@ -71,21 +73,21 @@ class CreateNoteModal extends Modal {
 
 						// Replace currently reading book placeholder
 						if (this.plugin.settings.currentlyReading) {
-							const currentlyReadingLink = `"[[${this.plugin.settings.currentlyReading.name}]]"`;
+							const currentlyReadingLink = `"[[${removeFileExtension(this.plugin.settings.currentlyReading?.name)}]]"`;
 							console.log(
 								"currentlyReadingLink",
 								currentlyReadingLink
 							);
 							noteContent = noteContent.replace(
-								/<% currently_reading_book %>/g,
+								new RegExp(CURRENTLY_READING_PLACEHOLDER, "g"),
 								`${currentlyReadingLink}`
 							);
 						} else {
 							console.log("no currently reading book");
 							// If no currently reading book is set, leave it empty or add a placeholder
 							noteContent = noteContent.replace(
-								/<% currently_reading_book %>/g,
-								"[]"
+								new RegExp(CURRENTLY_READING_PLACEHOLDER, "g"),
+								""
 							);
 						}
 					} else {
@@ -109,7 +111,7 @@ class CreateNoteModal extends Modal {
 			}
 
 			const newFile = await this.app.vault.create(filePath, noteContent);
-			console.log("newFile", newFile);
+			console.log("newFile", newFile); // for some reason it's empty
 
 			// Open the newly created note
 			const leaf = this.app.workspace.getLeaf(false);

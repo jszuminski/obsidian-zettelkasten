@@ -1,12 +1,12 @@
-import { CurrentlyReadingLiteratureNote } from "src/currentlyReading/types";
+import { TFile } from "obsidian";
 
 export type IPluginSettings = {
-	literatureNotesLocation: string;
-	currentlyReading: CurrentlyReadingLiteratureNote | null;
+	literatureNotesLocation: string; // @todo change to TFolder
+	currentlyReading: TFile | null;
 
 	// related to note creation
-	noteTemplatePath: string;
-	notesLocation: string;
+	noteTemplatePath: string; // @todo change to TFile
+	notesLocation: string; // @todo change to TFolder
 
 	idSeparator: string;
 };
