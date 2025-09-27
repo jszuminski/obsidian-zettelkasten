@@ -3,7 +3,7 @@
   "name": "Zettelkasten Automations",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "",
+  "description": "Automate your Zettelkasten workflow in Obsidian: quickly create literature, fleeting, and permanent notes from customizable templates, with support for multiple note types and a 'currently reading' book.",
   "author": "jszuminski",
   "authorUrl": "https://github.com/jszuminski",
   "fundingUrl": "",

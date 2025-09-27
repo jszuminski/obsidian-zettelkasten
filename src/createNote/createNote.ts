@@ -85,6 +85,7 @@ class CreateNoteModal extends Modal {
         noteContent = `# ${noteTitle}\n\n`;
       }
 
+      const newFile = await this.app.vault.create(filePath, noteContent);
       const newFileAbstract = this.app.vault.getFileByPath(filePath);
 
       // Open the newly created note
