@@ -23,7 +23,6 @@ class CreateNoteModal extends Modal {
     const noteTitle = this.inputEl?.value.trim();
 
     if (!noteTitle) {
-      console.log('No note title provided');
       return;
     }
 
@@ -63,13 +62,11 @@ class CreateNoteModal extends Modal {
           // Replace currently reading book placeholder
           if (this.plugin.settingsSerialized.currentlyReadingNote) {
             const currentlyReadingLink = `"[[${removeFileExtension(this.plugin.settingsSerialized.currentlyReadingNote?.name)}]]"`;
-            console.log('currentlyReadingLink: ', currentlyReadingLink);
             noteContent = noteContent.replace(
               new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
               `${currentlyReadingLink}`
             );
           } else {
-            console.log('no currently reading book');
             // If no currently reading book is set, leave it empty or add a placeholder
             noteContent = noteContent.replace(
               new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
@@ -88,12 +85,7 @@ class CreateNoteModal extends Modal {
         noteContent = `# ${noteTitle}\n\n`;
       }
 
-      // for some reason it's empty, so we're going to work around it by getting this file
-      const newFile = await this.app.vault.create(filePath, noteContent);
-      console.log('filePath: ', filePath);
       const newFileAbstract = this.app.vault.getFileByPath(filePath);
-      console.log('newFile', newFile); // for some reason it's empty
-      console.log('newFileAbstract', newFileAbstract);
 
       // Open the newly created note
       const leaf = this.app.workspace.getLeaf(true);

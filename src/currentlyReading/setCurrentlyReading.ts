@@ -58,16 +58,11 @@ class LiteratureNoteModal extends Modal {
       if (foundFile) {
         await this.updateSetting(foundFile);
         this.close();
-      } else {
-        console.log('No file selected or file not found');
       }
-    } else {
-      console.log('No file selected');
     }
   }
 
   onKeyDown = (e: KeyboardEvent) => {
-    console.log('onKeyDown', e.key);
     if (e.key === 'Enter') {
       this.onSave();
     }
