@@ -1,94 +1,40 @@
-# Obsidian Sample Plugin
+# Zettelkasten Automations
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An Obsidian plugin that helps you put the principles of the Zettelkasten method into practice by automating common note-taking tasks. Based on the note structure from this [YouTube video by Wanderloots](https://www.youtube.com/watch?v=00LKsV8h6zY).
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## 📚 Related reads
+- [How to take smart notes](https://www.goodreads.com/book/show/34507927-how-to-take-smart-notes?from_search=true&from_srp=true&qid=JUPrcUNkKv&rank=1)
+- [Building a second brain](https://www.goodreads.com/book/show/59616977-building-a-second-brain?ref=rae_2)
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## ✨ What it does
 
-## First time developing plugins?
+1. Lets you define custom note types (e.g. literature notes, permanent notes, fleeting notes, or atoms/molecules/alloys as in [this guide](https://www.youtube.com/watch?v=00LKsV8h6zY)) with their own folders and templates.
 
-Quick starting guide for new plugin devs:
+2. Adds commands to quickly create notes from templates — directly from the Command Palette.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+3. Supports a special *Currently Reading* note: when set, your templates can automatically link to the active book.
 
-## Releasing new releases
+![obsidian-zettelkasten-showcase](https://github.com/user-attachments/assets/094a54c3-5ed4-4383-b0b6-656a2e7ea0a1)
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+## 🚀 How to use
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+1. Configure your note types in the plugin’s settings:
+	- Choose a folder for each type (e.g. Literature, Permanent, Fleeting).
+	- Assign a template file for each
 
-## Adding your plugin to the community plugin list
+2. Set your currently reading book from the Command Palette.
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+3. Templates can use the `$currently_reading placeholder` to auto-insert the active book link.
 
-## How to use
+4. Create new notes quickly using the provided commands — the plugin will fill in the right template and put the note in the right place automatically.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+## ⚙️ Settings
 
-## Manually installing the plugin
+Configure multiple note types, each with its own template, location:
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+<img width="1144" height="1052" alt="Screenshot 2025-09-27 at 19 45 41" src="https://github.com/user-attachments/assets/0b809075-d74e-4d65-919d-d832569a7b83" />
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint ./src/`
+## Todo's
 
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+- [ ] add the possibility to template `created_at` and `updated_at` placeholders in templates
+- [ ] redesign the settings UI for improved looks & UX
