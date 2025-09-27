@@ -18,7 +18,7 @@ export default class IPlugin extends Plugin {
 
     this.addCommand({
       id: 'set-current-literature-note',
-      name: 'Set currently reading Literature Note',
+      name: 'Set currently reading literature note',
       callback: () => setCurrentlyReading(this),
     });
 

@@ -50,8 +50,8 @@ export class NoteSuggest extends AbstractInputSuggest<TFile> {
     this.inputEl.value = file.basename;
     this.inputEl.setAttribute('data-file-path', file.path);
 
-    const event = new Event('input');
-    this.inputEl.dispatchEvent(event);
+    this.inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+    this.inputEl.dispatchEvent(new Event('change', { bubbles: true }));
 
     this.close();
   }

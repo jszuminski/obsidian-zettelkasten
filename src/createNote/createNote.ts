@@ -123,7 +123,7 @@ class CreateNoteModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
 
-    contentEl.createEl('h2', { text: 'Create New Note' });
+    contentEl.createEl('h2', { text: `Create [${this.noteType.name}]` });
 
     // Create input field for note title
     this.inputEl = contentEl.createEl('input', {

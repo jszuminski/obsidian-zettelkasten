@@ -15,8 +15,6 @@ class LiteratureNoteModal extends Modal {
   }
 
   async updateSetting(file: TFile | null) {
-    console.log('updating settings with file: ', file);
-
     if (!file?.path) {
       return;
     }
@@ -79,7 +77,7 @@ class LiteratureNoteModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
 
-    contentEl.createEl('h2', { text: 'Select Literature Note' });
+    contentEl.createEl('h2', { text: 'Select literature note' });
 
     // Create clean input field with autocomplete
     this.inputEl = contentEl.createEl('input', {
@@ -98,13 +96,25 @@ class LiteratureNoteModal extends Modal {
     // Listen for input changes to track selected file
     this.inputEl.addEventListener('input', () => {
       const filePath = this.inputEl?.getAttribute('data-file-path');
-      if (filePath) {
-        this.selectedFile = this.app.vault.getAbstractFileByPath(
-          filePath
-        ) as TFile;
-      } else {
+
+      if (!filePath) {
+        this.inputEl!.removeAttribute('data-file-path');
         this.selectedFile = null;
+        return;
       }
+
+      const selected = this.app.vault.getAbstractFileByPath(filePath);
+
+      if (
+        !(selected instanceof TFile) ||
+        this.inputEl!.value.trim() !== selected.basename
+      ) {
+        this.inputEl!.removeAttribute('data-file-path');
+        this.selectedFile = null;
+        return;
+      }
+
+      this.selectedFile = selected;
     });
 
     // Create buttons container
