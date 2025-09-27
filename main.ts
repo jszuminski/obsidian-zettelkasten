@@ -22,11 +22,7 @@ export default class IPlugin extends Plugin {
       callback: () => setCurrentlyReading(this),
     });
 
-    this.addCommand({
-      id: 'create-note',
-      name: 'Create Note',
-      callback: () => createNote(this),
-    });
+    this.addCreateNotesCommands();
 
     this.addSettingTab(new SettingsTab(this.app, this));
   }
@@ -41,5 +37,18 @@ export default class IPlugin extends Plugin {
   async saveSettings() {
     await this.saveData(this.settings);
     this.settingsSerialized = serializeSettings(this.app, this.settings);
+
+    // in case the user added a new note type, we need to add this command
+    this.addCreateNotesCommands();
+  }
+
+  private async addCreateNotesCommands() {
+    for (const noteType of this.settingsSerialized.noteTypes) {
+      this.addCommand({
+        id: `create-note-${noteType.name}`,
+        name: `New [${noteType.name}]`,
+        callback: () => createNote(this, noteType),
+      });
+    }
   }
 }

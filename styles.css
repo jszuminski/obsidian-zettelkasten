@@ -1,3 +1,7 @@
+.settings-h2 {
+	font-size: 1.2rem !important;
+}
+
 .literature-note-input {
 	width: 100%;
 }
@@ -13,4 +17,17 @@
 	font-size: 12px;
 	color: var(--text-muted);
 	margin-top: 2px;
+}
+
+.divider {
+	opacity: 10%;
+	margin: 1rem 0;
+}
+
+body.theme-dark .divider {
+	background-color: #FFFFFF;
+}
+
+body.theme-light .divider {
+	background-color: #1a1a1a;
 }

@@ -1,5 +1,6 @@
 import { App, Modal, TFile } from 'obsidian';
 import { IPluginType } from 'src/plugin.types';
+import { IPluginNoteSettingsSerialized } from 'src/settings/settings.types';
 import { CURRENTLY_READING_PLACEHOLDER } from 'src/shared/config';
 import { getMaxFileIdInDirectory } from 'src/shared/getMaxFileIdInDirectory';
 import { removeFileExtension } from 'src/shared/removeFileExtension';
@@ -10,9 +11,12 @@ class CreateNoteModal extends Modal {
   private createButton: HTMLButtonElement | null = null;
   private cancelButton: HTMLButtonElement | null = null;
 
-  constructor(plugin: IPluginType) {
+  public noteType: IPluginNoteSettingsSerialized;
+
+  constructor(plugin: IPluginType, noteType: IPluginNoteSettingsSerialized) {
     super(plugin.app);
     this.plugin = plugin;
+    this.noteType = noteType;
   }
 
   async onCreate() {
@@ -30,64 +34,47 @@ class CreateNoteModal extends Modal {
       }
 
       const maxFileId = getMaxFileIdInDirectory({
-        directory: this.plugin.settings.notesLocation || '',
-        idSeparator: this.plugin.settings.idSeparator,
         obsidian: this.app,
+        idSeparator: this.plugin.settings.idSeparator,
+        directory: this.noteType.location || '',
       });
 
       const fileName = `${maxFileId + 1}${this.plugin.settings.idSeparator} ${noteTitle}.md`;
-      const filePath = this.plugin.settings.notesLocation
-        ? `${this.plugin.settings.notesLocation}/${fileName}`
+      const filePath = this.noteType.location
+        ? `${this.noteType.location.path}/${fileName}`
         : fileName;
 
       // Create the note content - use template if available
       let noteContent: string;
 
-      if (
-        this.plugin.settings.noteTemplatePath &&
-        this.plugin.settings.noteTemplatePath.trim()
-      ) {
+      if (this.noteType.template) {
         try {
-          console.log(this.plugin.settings.noteTemplatePath);
-          // Try to read the template file
-          const templateFile = this.app.vault.getAbstractFileByPath(
-            this.plugin.settings.noteTemplatePath
+          // Read the template content
+          const templateContent = await this.app.vault.read(
+            this.noteType.template
           );
-          console.log('templateFile', templateFile);
 
-          if (templateFile && templateFile instanceof TFile) {
-            // Read the template content
-            const templateContent = await this.app.vault.read(templateFile);
+          // Start with the template content
+          noteContent = templateContent;
 
-            // Start with the template content
-            noteContent = templateContent;
+          // Replace {{title}} placeholder with actual title
+          noteContent = noteContent.replace(/\{\{title\}\}/g, noteTitle);
 
-            // Replace {{title}} placeholder with actual title
-            noteContent = noteContent.replace(/\{\{title\}\}/g, noteTitle);
-
-            // Replace currently reading book placeholder
-            if (this.plugin.settingsSerialized.currentlyReadingNote) {
-              const currentlyReadingLink = `"[[${removeFileExtension(this.plugin.settingsSerialized.currentlyReadingNote?.name)}]]"`;
-              console.log('currentlyReadingLink: ', currentlyReadingLink);
-              noteContent = noteContent.replace(
-                new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
-                `${currentlyReadingLink}`
-              );
-            } else {
-              console.log('no currently reading book');
-              // If no currently reading book is set, leave it empty or add a placeholder
-              noteContent = noteContent.replace(
-                new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
-                ''
-              );
-            }
-          } else {
-            // Template file doesn't exist, use simple title
-            console.warn(
-              'Template file not found:',
-              this.plugin.settings.noteTemplatePath
+          // Replace currently reading book placeholder
+          if (this.plugin.settingsSerialized.currentlyReadingNote) {
+            const currentlyReadingLink = `"[[${removeFileExtension(this.plugin.settingsSerialized.currentlyReadingNote?.name)}]]"`;
+            console.log('currentlyReadingLink: ', currentlyReadingLink);
+            noteContent = noteContent.replace(
+              new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
+              `${currentlyReadingLink}`
             );
-            noteContent = `# ${noteTitle}\n\n`;
+          } else {
+            console.log('no currently reading book');
+            // If no currently reading book is set, leave it empty or add a placeholder
+            noteContent = noteContent.replace(
+              new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
+              ''
+            );
           }
         } catch (error) {
           console.warn(
@@ -182,6 +169,9 @@ class CreateNoteModal extends Modal {
   }
 }
 
-export function createNote(plugin: IPluginType) {
-  new CreateNoteModal(plugin).open();
+export function createNote(
+  plugin: IPluginType,
+  noteType: IPluginNoteSettingsSerialized
+) {
+  new CreateNoteModal(plugin, noteType).open();
 }
