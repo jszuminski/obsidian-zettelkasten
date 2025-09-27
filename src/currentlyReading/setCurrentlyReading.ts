@@ -1,139 +1,143 @@
-import { Modal, App, TFile } from "obsidian";
-import { NoteSuggest } from "src/shared/NoteSuggest.class";
-import { IPluginType } from "src/plugin.types";
+import { Modal, TFile } from 'obsidian';
+import { NoteSuggest } from 'src/shared/NoteSuggest.class';
+import { IPluginType } from 'src/plugin.types';
 
 class LiteratureNoteModal extends Modal {
-	private plugin: IPluginType;
-	private selectedFile: TFile | null = null;
-	private saveButton: HTMLButtonElement | null = null;
-	private cancelButton: HTMLButtonElement | null = null;
-	private inputEl: HTMLInputElement | null = null;
+  private plugin: IPluginType;
+  private selectedFile: TFile | null = null;
+  private saveButton: HTMLButtonElement | null = null;
+  private cancelButton: HTMLButtonElement | null = null;
+  private inputEl: HTMLInputElement | null = null;
 
-	constructor(app: App, plugin: IPluginType) {
-		super(app);
-		this.plugin = plugin;
-	}
+  constructor(plugin: IPluginType) {
+    super(plugin.app);
+    this.plugin = plugin;
+  }
 
-	async updateSetting(file: TFile | null) {
-		console.log('updating setting with file: ', file);
+  async updateSetting(file: TFile | null) {
+    console.log('updating settings with file: ', file);
 
-		if (this.saveButton) {
-			this.saveButton.textContent = "Saving...";
-		}
+    if (!file?.path) {
+      return;
+    }
 
-		this.plugin.settings.currentlyReading = file;
-		await this.plugin.saveSettings();
+    if (this.saveButton) {
+      this.saveButton.textContent = 'Saving...';
+    }
 
-		if (this.saveButton) {
-			this.saveButton.textContent = "Saved";
-		}
-	}
+    this.plugin.settings.currentlyReadingNotePath = file.path;
+    await this.plugin.saveSettings();
 
-	async onSave() {
-		if (this.selectedFile) {
-			await this.updateSetting(this.selectedFile);
-			this.close();
-			return;
-		}
+    if (this.saveButton) {
+      this.saveButton.textContent = 'Saved';
+    }
+  }
 
-		// Try to find file by input value
-		const inputValue = this.inputEl?.value.trim();
-		if (inputValue) {
-			// Search for file by basename
-			const allFiles = this.app.vault.getMarkdownFiles();
-			const foundFile = allFiles.find(
-				(file) =>
-					file.basename === inputValue &&
-					(file.path.startsWith(
-						this.plugin.settings.literatureNotesLocation + "/"
-					) ||
-						file.path.startsWith(
-							this.plugin.settings.literatureNotesLocation
-						) ||
-						!this.plugin.settings.literatureNotesLocation)
-			);
+  async onSave() {
+    if (this.selectedFile) {
+      await this.updateSetting(this.selectedFile);
+      this.close();
+      return;
+    }
 
-			if (foundFile) {
-				await this.updateSetting(foundFile);
-				this.close();
-			} else {
-				console.log("No file selected or file not found");
-			}
-		} else {
-			console.log("No file selected");
-		}
-	}
+    // Try to find file by input value
+    const inputValue = this.inputEl?.value.trim();
+    if (inputValue) {
+      // Search for file by basename
+      const allFiles = this.app.vault.getMarkdownFiles();
+      const foundFile = allFiles.find(
+        (file) =>
+          file.basename === inputValue &&
+          (file.path.startsWith(
+            this.plugin.settings.literatureNotesFolderPath + '/'
+          ) ||
+            file.path.startsWith(
+              this.plugin.settings.literatureNotesFolderPath || ''
+            ) ||
+            !this.plugin.settings.literatureNotesFolderPath)
+      );
 
-	onKeyDown = (e: KeyboardEvent) => {
-		console.log("onKeyDown", e.key);
-		if (e.key === "Enter") {
-			this.onSave();
-		}
-	};
+      if (foundFile) {
+        await this.updateSetting(foundFile);
+        this.close();
+      } else {
+        console.log('No file selected or file not found');
+      }
+    } else {
+      console.log('No file selected');
+    }
+  }
 
-	onOpen() {
-		const { contentEl } = this;
-		contentEl.empty();
+  onKeyDown = (e: KeyboardEvent) => {
+    console.log('onKeyDown', e.key);
+    if (e.key === 'Enter') {
+      this.onSave();
+    }
+  };
 
-		contentEl.createEl("h2", { text: "Select Literature Note" });
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
 
-		// Create clean input field with autocomplete
-		this.inputEl = contentEl.createEl("input", {
-			type: "text",
-			placeholder: "Start typing to search notes...",
-			cls: "literature-note-input",
-		});
+    contentEl.createEl('h2', { text: 'Select Literature Note' });
 
-		// Add autocomplete functionality
-		new NoteSuggest(
-			this.app,
-			this.inputEl,
-			this.plugin.settings.literatureNotesLocation
-		);
+    // Create clean input field with autocomplete
+    this.inputEl = contentEl.createEl('input', {
+      type: 'text',
+      placeholder: 'Start typing to search notes...',
+      cls: 'literature-note-input',
+    });
 
-		// Listen for input changes to track selected file
-		this.inputEl.addEventListener("input", () => {
-			const filePath = this.inputEl?.getAttribute("data-file-path");
-			if (filePath) {
-				this.selectedFile = this.app.vault.getAbstractFileByPath(
-					filePath
-				) as TFile;
-			} else {
-				this.selectedFile = null;
-			}
-		});
+    // Add autocomplete functionality
+    new NoteSuggest(
+      this.app,
+      this.inputEl,
+      this.plugin.settings.literatureNotesFolderPath
+    );
 
-		// Create buttons container
-		const buttonContainer = contentEl.createEl("div", {
-			cls: "modal-button-container",
-		});
+    // Listen for input changes to track selected file
+    this.inputEl.addEventListener('input', () => {
+      const filePath = this.inputEl?.getAttribute('data-file-path');
+      if (filePath) {
+        this.selectedFile = this.app.vault.getAbstractFileByPath(
+          filePath
+        ) as TFile;
+      } else {
+        this.selectedFile = null;
+      }
+    });
 
-		this.cancelButton = buttonContainer.createEl("button", {
-			text: "Cancel",
-		});
+    // Create buttons container
+    const buttonContainer = contentEl.createEl('div', {
+      cls: 'modal-button-container',
+    });
 
-		this.saveButton = buttonContainer.createEl("button", {
-			text: "Save",
-			cls: "mod-cta",
-		});
+    this.cancelButton = buttonContainer.createEl('button', {
+      text: 'Cancel',
+    });
 
-		this.cancelButton.addEventListener("click", () => {
-			this.close();
-		});
+    this.saveButton = buttonContainer.createEl('button', {
+      text: 'Save',
+      cls: 'mod-cta',
+    });
 
-		this.saveButton.addEventListener("click", async () => {
-			this.onSave();
-		});
+    this.cancelButton.addEventListener('click', () => {
+      this.close();
+    });
 
-		document.addEventListener("keydown", this.onKeyDown);
-	}
+    this.saveButton.addEventListener('click', async () => {
+      this.onSave();
+    });
 
-	onClose() {
-		this.contentEl.empty();
-		document.removeEventListener("keydown", this.onKeyDown);
-	}
+    document.addEventListener('keydown', this.onKeyDown);
+  }
+
+  onClose() {
+    this.contentEl.empty();
+    document.removeEventListener('keydown', this.onKeyDown);
+  }
 }
 
-export function setCurrentlyReading(app: App, plugin: IPluginType) {
-	new LiteratureNoteModal(app, plugin).open();
+export function setCurrentlyReading(plugin: IPluginType) {
+  new LiteratureNoteModal(plugin).open();
 }
