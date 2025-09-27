@@ -24,7 +24,7 @@ An Obsidian plugin that helps you put the principles of the Zettelkasten method 
 
 2. Set your currently reading book from the Command Palette.
 
-3. Templates can use the `$currently_reading placeholder` to auto-insert the active book link.
+3. Templates can use the `$currently_reading` placeholder to auto-insert the active book link.
 
 4. Create new notes quickly using the provided commands — the plugin will fill in the right template and put the note in the right place automatically.
 
