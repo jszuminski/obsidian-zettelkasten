@@ -27,6 +27,7 @@ export const serializeSettings = (
     idSeparator: settings.idSeparator,
     literatureNotesFolder: getFolder(settings.literatureNotesFolderPath),
     currentlyReadingNote: getFile(settings.currentlyReadingNotePath),
+    currentTopicNote: getFile(settings.currentTopicNotePath),
     noteTypes: settings.noteTypes.map((note) => ({
       name: note.name,
       template: getFile(note.templatePath),

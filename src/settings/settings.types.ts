@@ -22,6 +22,7 @@ export type IPluginSettings = {
 
   literatureNotesFolderPath: string | null;
   currentlyReadingNotePath: string | null;
+  currentTopicNotePath: string | null;
 
   noteTypes: IPluginNoteSettings[];
 };
@@ -31,6 +32,7 @@ export type IPluginSettingsSerialized = {
 
   literatureNotesFolder: TFolder | null;
   currentlyReadingNote: TFile | null;
+  currentTopicNote: TFile | null;
 
   noteTypes: IPluginNoteSettingsSerialized[];
 };

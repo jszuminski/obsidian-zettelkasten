@@ -1,7 +1,10 @@
 import { App, Modal, TFile } from 'obsidian';
 import { IPluginType } from 'src/plugin.types';
 import { IPluginNoteSettingsSerialized } from 'src/settings/settings.types';
-import { CURRENTLY_READING_PLACEHOLDER } from 'src/shared/config';
+import {
+  CURRENTLY_READING_PLACEHOLDER,
+  CURRENT_TOPIC_PLACEHOLDER,
+} from 'src/shared/config';
 import { getMaxFileIdInDirectory } from 'src/shared/getMaxFileIdInDirectory';
 import { removeFileExtension } from 'src/shared/removeFileExtension';
 
@@ -67,7 +70,19 @@ class CreateNoteModal extends Modal {
               `${currentlyReadingLink}`
             );
           } else {
-            // If no currently reading book is set, leave it empty or add a placeholder
+            noteContent = noteContent.replace(
+              new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
+              ''
+            );
+          }
+
+          if (this.plugin.settingsSerialized.currentTopicNote) {
+            const currentTopicLink = `"[[${removeFileExtension(this.plugin.settingsSerialized.currentTopicNote?.name)}]]"`;
+            noteContent = noteContent.replace(
+              new RegExp(CURRENT_TOPIC_PLACEHOLDER, 'g'),
+              `${currentTopicLink}`
+            );
+          } else {
             noteContent = noteContent.replace(
               new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
               ''
