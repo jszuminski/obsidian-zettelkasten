@@ -38,4 +38,5 @@ Configure multiple note types, each with its own template, location:
 
 - [ ] add the possibility to template `created_at` and `updated_at` placeholders in templates
 - [ ] redesign the settings UI for improved looks & UX
-- [ ] fix the bug when the settings get lost for some reason (currently reading book) + notes start from `1` in the main dir (settings lost probably as well) 
+- [ ] fix the bug when the settings get lost for some reason (currently reading book) + notes start from `1` in the main dir (settings lost probably as well)
+- [ ] disallow for usage of `/` in new note name (this breaks, creates an error)
