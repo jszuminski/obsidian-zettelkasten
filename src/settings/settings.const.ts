@@ -6,6 +6,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 
   literatureNotesFolderPath: null,
   currentlyReadingNotePath: null,
+  currentTopicNotePath: null,
 
   // ex. "Atoms", "Molecules", "Literature"
   noteTypes: [],
