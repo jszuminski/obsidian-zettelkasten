@@ -58,7 +58,8 @@ export class SettingsTab extends PluginSettingTab {
         search.setPlaceholder('ex. Currently Reading');
         search.setValue(this.plugin.settings.currentlyReadingNotePath || '');
         search.onChange(async (value) => {
-          this.plugin.settings.currentlyReadingNotePath = value;
+          const path = search.inputEl.getAttribute('data-file-path');
+          this.plugin.settings.currentlyReadingNotePath = path || value;
           await this.plugin.saveSettings();
         });
 
