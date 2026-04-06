@@ -13,10 +13,7 @@ export class NoteSuggest extends AbstractInputSuggest<TFile> {
         return true;
       }
 
-      return (
-        file.path.startsWith(folderPath + '/') ||
-        file.path.startsWith(folderPath)
-      );
+      return file.path.startsWith(folderPath + '/');
     });
   }
 

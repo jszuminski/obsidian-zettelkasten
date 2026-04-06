@@ -9,6 +9,15 @@ const MAX_NOTE_TYPES = 10;
 export class SettingsTab extends PluginSettingTab {
   plugin: IPluginType;
 
+  private saveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  private debouncedSave = async () => {
+    if (this.saveTimeout) clearTimeout(this.saveTimeout);
+    this.saveTimeout = setTimeout(async () => {
+      await this.plugin.saveSettings();
+    }, 500);
+  };
+
   constructor(app: App, plugin: IPluginType) {
     super(app, plugin);
     this.plugin = plugin;
@@ -30,9 +39,9 @@ export class SettingsTab extends PluginSettingTab {
       .addText((text) => {
         text.setPlaceholder('. or / or )');
         text.setValue(this.plugin.settings.idSeparator);
-        text.onChange(async (value) => {
+        text.onChange((value) => {
           this.plugin.settings.idSeparator = value;
-          await this.plugin.saveSettings();
+          this.debouncedSave();
         });
       });
 
@@ -43,9 +52,9 @@ export class SettingsTab extends PluginSettingTab {
         search
           .setPlaceholder('ex. Literature')
           .setValue(this.plugin.settings.literatureNotesFolderPath || '')
-          .onChange(async (value) => {
+          .onChange((value) => {
             this.plugin.settings.literatureNotesFolderPath = value;
-            await this.plugin.saveSettings();
+            this.debouncedSave();
           });
 
         new FolderSuggest(this.app, search.inputEl);
@@ -57,10 +66,10 @@ export class SettingsTab extends PluginSettingTab {
       .addSearch((search) => {
         search.setPlaceholder('ex. Currently Reading');
         search.setValue(this.plugin.settings.currentlyReadingNotePath || '');
-        search.onChange(async (value) => {
+        search.onChange((value) => {
           const path = search.inputEl.getAttribute('data-file-path');
           this.plugin.settings.currentlyReadingNotePath = path || value;
-          await this.plugin.saveSettings();
+          this.debouncedSave();
         });
 
         new NoteSuggest(
@@ -177,9 +186,9 @@ export class SettingsTab extends PluginSettingTab {
         text
           .setPlaceholder('e.g. Daily, Project, Literature')
           .setValue(nt.name || '')
-          .onChange(async (value) => {
+          .onChange((value) => {
             nt.name = value;
-            await this.plugin.saveSettings();
+            this.debouncedSave();
           });
       });
 
@@ -191,10 +200,10 @@ export class SettingsTab extends PluginSettingTab {
         search
           .setPlaceholder('e.g. Templates/Project Note')
           .setValue(nt.templatePath || '')
-          .onChange(async (value) => {
+          .onChange((value) => {
             const path = search.inputEl.getAttribute('data-file-path');
             nt.templatePath = path || value;
-            await this.plugin.saveSettings();
+            this.debouncedSave();
           });
 
         new NoteSuggest(this.app, search.inputEl, '/');
@@ -208,9 +217,9 @@ export class SettingsTab extends PluginSettingTab {
         search
           .setPlaceholder('e.g. Notes/Projects')
           .setValue(nt.locationPath || '')
-          .onChange(async (value) => {
+          .onChange((value) => {
             nt.locationPath = value;
-            await this.plugin.saveSettings();
+            this.debouncedSave();
           });
 
         new FolderSuggest(this.app, search.inputEl);
