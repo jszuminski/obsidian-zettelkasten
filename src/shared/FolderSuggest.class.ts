@@ -27,8 +27,8 @@ export class FolderSuggest extends AbstractInputSuggest<string> {
 
 	selectSuggestion(folder: string): void {
 		this.inputEl.value = folder;
-		const event = new Event("input");
-		this.inputEl.dispatchEvent(event);
+		this.inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+		this.inputEl.dispatchEvent(new Event('change', { bubbles: true }));
 		this.close();
 	}
 }

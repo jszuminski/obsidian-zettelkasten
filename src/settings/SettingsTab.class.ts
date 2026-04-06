@@ -190,9 +190,9 @@ export class SettingsTab extends PluginSettingTab {
         search
           .setPlaceholder('e.g. Templates/Project Note')
           .setValue(nt.templatePath || '')
-          .onChange(async () => {
+          .onChange(async (value) => {
             const path = search.inputEl.getAttribute('data-file-path');
-            nt.templatePath = path || '';
+            nt.templatePath = path || value;
             await this.plugin.saveSettings();
           });
 
