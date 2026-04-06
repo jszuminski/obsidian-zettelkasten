@@ -1,6 +1,5 @@
 import { Plugin } from 'obsidian';
 import { setCurrentlyReading } from 'src/currentlyReading/setCurrentlyReading';
-import { setCurrentTopic } from 'src/currentTopic/setCurrentTopic';
 import { DEFAULT_SETTINGS } from 'src/settings/settings.const';
 import {
   IPluginSettings,
@@ -21,12 +20,6 @@ export default class IPlugin extends Plugin {
       id: 'set-current-literature-note',
       name: 'Set currently reading literature note',
       callback: () => setCurrentlyReading(this),
-    });
-
-    this.addCommand({
-      id: 'set-current-topic-ntoe',
-      name: 'Set current topic note',
-      callback: () => setCurrentTopic(this),
     });
 
     this.addCreateNotesCommands();
