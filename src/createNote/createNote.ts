@@ -1,10 +1,7 @@
 import { App, Modal, TFile } from 'obsidian';
 import { IPluginType } from 'src/plugin.types';
 import { IPluginNoteSettingsSerialized } from 'src/settings/settings.types';
-import {
-  CURRENTLY_READING_PLACEHOLDER,
-  CURRENT_TOPIC_PLACEHOLDER,
-} from 'src/shared/config';
+import { CURRENTLY_READING_PLACEHOLDER } from 'src/shared/config';
 import { getMaxFileIdInDirectory } from 'src/shared/getMaxFileIdInDirectory';
 import { removeFileExtension } from 'src/shared/removeFileExtension';
 
@@ -76,18 +73,6 @@ class CreateNoteModal extends Modal {
             );
           }
 
-          if (this.plugin.settingsSerialized.currentTopicNote) {
-            const currentTopicLink = `"[[${removeFileExtension(this.plugin.settingsSerialized.currentTopicNote?.name)}]]"`;
-            noteContent = noteContent.replace(
-              new RegExp(CURRENT_TOPIC_PLACEHOLDER, 'g'),
-              `${currentTopicLink}`
-            );
-          } else {
-            noteContent = noteContent.replace(
-              new RegExp(CURRENTLY_READING_PLACEHOLDER, 'g'),
-              ''
-            );
-          }
         } catch (error) {
           console.warn(
             'Could not read template file, using simple title:',
