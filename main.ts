@@ -44,8 +44,9 @@ export default class IPlugin extends Plugin {
   }
 
   private addCreateNotesCommands() {
-    for (const noteType of this.settingsSerialized.noteTypes) {
-      const id = `create-note-${noteType.name}`;
+    for (let i = 0; i < this.settingsSerialized.noteTypes.length; i++) {
+      const noteType = this.settingsSerialized.noteTypes[i];
+      const id = `create-note-type-${i}`;
       if (this.registeredCommandIds.has(id)) continue;
       this.registeredCommandIds.add(id);
       this.addCommand({

@@ -9,6 +9,29 @@ class LiteratureNoteModal extends Modal {
   private cancelButton: HTMLButtonElement | null = null;
   private inputEl: HTMLInputElement | null = null;
 
+  private onInputChange = () => {
+    const filePath = this.inputEl?.getAttribute('data-file-path');
+
+    if (!filePath) {
+      this.inputEl!.removeAttribute('data-file-path');
+      this.selectedFile = null;
+      return;
+    }
+
+    const selected = this.app.vault.getAbstractFileByPath(filePath);
+
+    if (
+      !(selected instanceof TFile) ||
+      this.inputEl!.value.trim() !== selected.basename
+    ) {
+      this.inputEl!.removeAttribute('data-file-path');
+      this.selectedFile = null;
+      return;
+    }
+
+    this.selectedFile = selected;
+  };
+
   constructor(plugin: IPluginType) {
     super(plugin.app);
     this.plugin = plugin;
@@ -89,28 +112,7 @@ class LiteratureNoteModal extends Modal {
     );
 
     // Listen for input changes to track selected file
-    this.inputEl.addEventListener('input', () => {
-      const filePath = this.inputEl?.getAttribute('data-file-path');
-
-      if (!filePath) {
-        this.inputEl!.removeAttribute('data-file-path');
-        this.selectedFile = null;
-        return;
-      }
-
-      const selected = this.app.vault.getAbstractFileByPath(filePath);
-
-      if (
-        !(selected instanceof TFile) ||
-        this.inputEl!.value.trim() !== selected.basename
-      ) {
-        this.inputEl!.removeAttribute('data-file-path');
-        this.selectedFile = null;
-        return;
-      }
-
-      this.selectedFile = selected;
-    });
+    this.inputEl.addEventListener('input', this.onInputChange);
 
     // Create buttons container
     const buttonContainer = contentEl.createEl('div', {
@@ -138,6 +140,7 @@ class LiteratureNoteModal extends Modal {
   }
 
   onClose() {
+    this.inputEl?.removeEventListener('input', this.onInputChange);
     this.contentEl.empty();
     document.removeEventListener('keydown', this.onKeyDown);
   }
