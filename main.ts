@@ -12,6 +12,7 @@ import { serializeSettings } from 'src/settings/serializeSettings';
 export default class IPlugin extends Plugin {
   settings: IPluginSettings;
   settingsSerialized: IPluginSettingsSerialized;
+  private registeredCommandIds = new Set<string>();
 
   async onload() {
     await this.loadSettings();
@@ -42,10 +43,13 @@ export default class IPlugin extends Plugin {
     this.addCreateNotesCommands();
   }
 
-  private async addCreateNotesCommands() {
+  private addCreateNotesCommands() {
     for (const noteType of this.settingsSerialized.noteTypes) {
+      const id = `create-note-${noteType.name}`;
+      if (this.registeredCommandIds.has(id)) continue;
+      this.registeredCommandIds.add(id);
       this.addCommand({
-        id: `create-note-${noteType.name}`,
+        id,
         name: `New [${noteType.name}]`,
         callback: () => createNote(this, noteType),
       });
